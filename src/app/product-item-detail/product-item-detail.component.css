@@ -1,0 +1,45 @@
+*, ::after, ::before {
+  box-sizing: border-box;
+}
+
+  form {
+    display: flex; 
+    flex-direction: column;
+    justify-content: left;
+    align-items: flex-start;
+}
+ .container{
+  width: 800px;
+  margin:60px auto;
+
+ }
+.details{
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  align-items: flex-start;
+
+}
+p{
+  font-size: 20px;
+  letter-spacing: 1px;
+}
+  .product-index {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  } 
+  select{
+    width: 90px;
+    height: 25px;
+    font-size: 15px;
+
+  }
+  
+   img{
+     
+    width: 290px;
+    padding: 20px;
+    margin: 6px 6px;        
+    border: 1px solid #33B5E5;
+  }

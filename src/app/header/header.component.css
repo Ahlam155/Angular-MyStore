@@ -1,0 +1,9 @@
+.header {
+    text-align: center;
+    background: #33B5E5;
+    color: #fff;
+    padding: 12px;
+  }
+.header h1{
+  font-size:40px;
+}
