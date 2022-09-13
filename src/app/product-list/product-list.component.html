@@ -2,21 +2,20 @@
         <div class="product-index "   *ngFor="let myProducts of myProductDetails" >
         <a routerLink="/product-detail/:{{myProducts.id}}"> 
             <img src="{{myProducts.url}}">
-        </a>
+        </a> 
         <p><b>{{myProducts.name}}</b></p>
         <p>${{myProducts.price}}</p>
-
-        <form  (ngSubmit)="onSubmit(myProducts, $event)">
-            <select name="quantity" >
-                <option value="1">1</option>
+ 
+        <form  #form="ngForm" (ngSubmit)="onSubmit(myProducts , $event) ">
+            <select required name="quantity" [ngModel]="myProducts.option" (ngModelChange)="onChange(myProducts,$event)">
+                <option value="1" selected >1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
-                <option value="4">4</option>
+                <option value="4">4</option> 
                 <option value="5">5</option>
-                
             </select>
             <br>
-            <input type="submit" value="Add to Cart" style="margin-bottom: 10px;" class="product-detail btn btn-primary">
+            <input  type="submit" [disabled]="form.invalid" value="Add to Cart" style="margin-bottom: 10px;" class="product-detail btn btn-primary">
         </form>
 
     </div>

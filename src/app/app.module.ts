@@ -12,6 +12,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CheckoutComponent } from './checkout/checkout.component';
+import { DatePipe } from '@angular/common';
+import { CheckoutSuccessComponent } from './checkout-success/checkout-success.component';
 
 @NgModule({
   declarations: [
@@ -23,9 +25,10 @@ import { CheckoutComponent } from './checkout/checkout.component';
     NavComponent,
     routingComponents,
     CheckoutComponent,
+    CheckoutSuccessComponent,
    
 
-  ],
+  ], 
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -34,7 +37,7 @@ import { CheckoutComponent } from './checkout/checkout.component';
     FormsModule
 
   ],
-  providers: [],
+  providers: [DatePipe,ProductListComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

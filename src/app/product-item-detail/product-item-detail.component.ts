@@ -1,8 +1,11 @@
 import { ProductServiceService } from '../services/product-service.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit,Output } from '@angular/core';
 import { productsDetails } from '../models/product-details';
 import { ActivatedRoute } from '@angular/router';
-import { CartProductDetails } from '../models/product-details'; 
+import { Subscription } from 'rxjs';
+import { CartServiceService } from '../services/cart-service.service';
+
+
 
 
 @Component({
@@ -12,85 +15,121 @@ import { CartProductDetails } from '../models/product-details';
 })
 export class ProductItemDetailComponent implements OnInit {
 product:productsDetails[]=[];
-id:number=0;
+cartProducts:productsDetails[]=this.cartService.allCartProduct;
+
+@Output() addNewProduct:EventEmitter<productsDetails>=new EventEmitter;
+idValue:number=0;
 text:string[]=['You can read it!','Listen to stuff','Carry things around town',
                 'Now you can see better','Drink anything with it','Wear it with style'];
-  constructor(private productService:ProductServiceService,private route:ActivatedRoute) {
+
+totalPrice!: number;
+subscription: Subscription = new Subscription;
+totalPriceOfCarts:number=0;
+
+  constructor( private cartService:CartServiceService,private productService:ProductServiceService,private route:ActivatedRoute) {
     
    }
 
   ngOnInit(): void {
+
+
+
+    this.subscription = this.productService.currentValue.subscribe(totalPrice => this.totalPrice = totalPrice)
+    
+
     this.productService.getProductsInfo().subscribe(data=>{
       this.product=data;
     })
     this.route.paramMap.subscribe(param =>
       {
 
-     
-     const data= param.get('id');
-     console.log(data);
-     if (data ==':1'){
-      this.id=1;
-     }
-     if (data ==':2'){
-      this.id=2;
-     }
-     if (data ==':3'){
-      this.id=3;
-     }
-     if (data ==':4'){
-      this.id=4;
-     }
-     if (data ==':5'){
-      this.id=5;
-     }
-     if (data ==':6'){
-      this.id=6;
-     }
+
+    const data= param.get('id');
+    console.log(data);
+    if (data ==':1'){
+      this.idValue=1;
+  }
+    if (data ==':2'){
+      this.idValue=2;
+    }
+    if (data ==':3'){
+      this.idValue=3;
+    }
+    if (data ==':4'){
+      this.idValue=4;
+    }
+    if (data ==':5'){
+      this.idValue=5;
+    }
+    if (data ==':6'){
+      this.idValue=6;
+    }
 
     }
-     
-     );
-     
+    
+    );
+    
   }
-  onSubmit(cartProduct: productsDetails, event: any): boolean
-{
-  let newCartProduct: CartProductDetails[] = [];
-  let message: string = '';
-  let isCartOptionExist: boolean = false;
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
+   
 
-  const selectedOption = event.target[0].options[event.target[0].options.selectedIndex].value;
-  const cartProducts: CartProductDetails[] | [] = this.productService.getCartProduct();
-
-    const cartIdx = cartProducts.findIndex(cart => cart.id === cartProduct.id)
-    newCartProduct = cartProducts;
-
-    if((cartIdx === -1) || (cartProducts.length === 0)){
-      newCartProduct.push(Object.assign(cartProduct, {option: selectedOption}))
-      message = `New Item '${cartProduct.name}' added to cart`;
-    } else{
-      const option: string = newCartProduct[cartIdx].option;
-      isCartOptionExist = selectedOption === option
-
-      if (isCartOptionExist){
-        message = `${option} Item(s) of '${cartProduct.name}' already exist in cart.`;
-      }else{
-        newCartProduct[cartIdx].id = cartProduct.id;
-        newCartProduct[cartIdx].option = selectedOption;
-        message = `${option} Item(s) of '${cartProduct.name}' already exist in cart. Will be updated to ${selectedOption}`;
-      }
-      
-    }
-    !isCartOptionExist? this.productService.addToCart(newCartProduct): null;
-
-    alert(message);
-
-    this.printLocalData(); // for debugging
-    return false;
   }
-  printLocalData(): void{
-    console.log(this.productService.getCartProduct())
+  onSubmit(cartProduct: productsDetails, event: any):any{
+    let count=Number(cartProduct.option )*cartProduct.price;
+
+let option=Number(cartProduct.option);
+if(this.isExist(cartProduct)){
+  this.cartService.option+=option;
+  cartProduct.total=this.cartService.option;
+  console.log('cartProduct.total',this.cartService.option)
+  console.log(' cartProduct.total', cartProduct.total)
+  this.cartService.addProductToCart(cartProduct);
+
 }
+else{
+  this.cartService.addProductToCart(cartProduct);
+  console.log('new product is added')
+  this.cartService.option=Number(cartProduct.option);
+  cartProduct.total=this.cartService.option;
+
+}
+   alert(`New product(s) of ${cartProduct.name} is(are) added to cart`)
+
+
+        this.totalPrice=this.cartService.option*cartProduct.price;
+        cartProduct.totalPrice=this.totalPrice;
+        console.log(' totalPrice', this.totalPrice)
+
+        this.cartService.totalPrice+=count;
+        console.log(' this.cartService.totalPrice', this.cartService.totalPrice)
+
+
+
+    this.productService.changeValue(this.totalPriceOfCarts)
+
    
  
+  
+  }
+onChange(products:productsDetails, newValue: any) {
+  products.option = newValue;  
+  
 }
+
+ getProduct(product:productsDetails){
+  this.cartService.addProductToCart(product)  
+
+ }
+ isExist(cart:productsDetails):boolean{
+  let exsit=false
+  this.cartProducts.forEach(function(document)
+    { 
+      if(document.id===cart.id){
+        exsit=true
+      }
+    });
+    return exsit;
+}
+}
+

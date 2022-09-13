@@ -1,33 +1,28 @@
-<div *ngIf="cartProducts.length; else empty" class="cart-container">
+<div *ngIf="myCart.length; else empty" class="cart-container">
     <div class="cart-item-details">
-        <div *ngFor="let cartProduct of cartProducts" class="cart-item">
-            <img class="" src='{{cartProduct.url}}'>
-            <div class="cart-details">
+        <div *ngFor="let cartProduct of myCart"  class="cart-item">
+            <img *ngIf="cartProduct.id!=0" class="" src='{{cartProduct.url}}'>
+            <div *ngIf="cartProduct.id!=0" class="cart-details">
                 <div class="product-item-detail">{{ cartProduct.name}}</div>
                 <div class="product-item-detail">$ {{ cartProduct.price}}</div>
                 <div class="product-item-detail">
-                    <select name="quantity" >
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        
-                    </select>
+                    
+                <input [ngModel]="cartProduct.total" (ngModelChange)="onChange(cartProduct,$event)" type="number" id="quantity" name="quantity" min="1" max="100" step="1" value={{cartProduct.total}}>
+     
                     <br>
                 </div>
-                <div class="product-item-detail">
-                    <button (click)="removeCart(cartProduct.id)"  class="product-item-detail btn btn-primary">Remove</button>
+                <div *ngIf="cartProduct.id!=0" class="product-item-detail">
+                    <button (click)="removeCart(cartProduct)"  class="product-item-detail btn btn-primary">Remove</button>
                 </div>
         </div>
         </div>
-        <div class="cart-item"><b>Total Price: ${{ totalPrice }}</b></div>
+        <div  class="cart-item"><b>Total Price: ${{ totalPrice}}</b></div>
     </div>
-    <div class="form-margin">
+    <div  class="form-margin">
             <app-checkout (checkoutSuccess)="checkoutSuccess($event)"></app-checkout>
     </div>
 </div>
-<ng-template #empty>
+<ng-template #empty >
     <div class="empty-cart-message">
     Cart is Empty! Please, <a routerLink="/"> add product to cart</a>. 
     </div>

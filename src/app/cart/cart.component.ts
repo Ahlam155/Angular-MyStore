@@ -1,49 +1,83 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProductServiceService } from '../services/product-service.service';
-import { productsDetails ,CartProductDetails } from '../models/product-details';
+import { productsDetails  } from '../models/product-details';
+import { CartServiceService } from '../services/cart-service.service';
+import { ProductListComponent } from '../product-list/product-list.component';
+import { Subscription } from 'rxjs';
 
-@Component({
+@Component({ 
   selector: 'app-cart',
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.css']
 })
 export class CartComponent implements OnInit {
   productCount: string[] = ["1", "2", "3", "4", "5"];
-  products: productsDetails[]= [];
-  cartProducts: CartProductDetails[] = [];
-  totalPrice: number = 0;
-  constructor(private productService: ProductServiceService, private route: Router) { }
+  myCart:productsDetails[]=this.cartService.allCartProduct.filter((value, index, self) =>
+  index === self.findIndex((t) => (
+    t.id === value.id && t.name === value.name
+  )));
+  cartProducts:productsDetails[]=this.cartService.allCartProduct;
+  totalPriceOfCarts:number=0;
+  value:number=0;
+  totalPrice:number=this.cartService.totalPrice;
+  constructor(private productService: ProductServiceService, private route: Router,private cartService:CartServiceService) 
+  { 
 
+  }
+  
   ngOnInit(): void {
-    this.cartProducts = this.productService.getCartProduct();
-    this.calculateTotalPrice();
-  }
-  selectChange(id: number, event: any): void{
-    const selectedOption = event.target.options[event.target.options.selectedIndex].value;
-    const cartIdx = this.cartProducts.findIndex(cart => cart.id === id);
-    cartIdx != -1 && this.cartProducts.length > 0 ? this.cartProducts[cartIdx].option = selectedOption: null;
-    this.cartProducts.length > 0 ? this.productService.addToCart(this.cartProducts): null;
-    this.calculateTotalPrice()
+
 
   }
-  removeCart(id: number): void{
-    const cartIdx = this.cartProducts? this.cartProducts.findIndex(cart => cart.id === id): -1;
-    if(cartIdx != -1 && this.cartProducts.length > 0){
-      this.cartProducts.splice(cartIdx,1)
-      this.productService.addToCart(this.cartProducts)
-      this.calculateTotalPrice()
-    }
-  }
-  calculateTotalPrice(): void{
-    this.totalPrice = this.cartProducts.reduce((acc: number, val: any) =>{
-      return acc + val.price * Number(val.option);
-    }, 0);
-    this.totalPrice = Number(this.totalPrice.toFixed(2));
-  }
-  checkoutSuccess(firstName: string): void{
-    this.productService.clearCart();
-    this.route.navigateByUrl(`success/${firstName}/${this.totalPrice}`);
-  }
+  
+ 
+
+ 
+  removeCart(cardInfo:productsDetails){
+    let total=0;
+
+    this.cartProducts.forEach(function(document)
+    {
+      if(document.id===cardInfo.id){
+        total=cardInfo.total*cardInfo.price;
+      }
+    });
+    this.totalPrice-=total
+
+
+  this.cartService.totalPrice-=total;
+
+
+
+    this.myCart=this.myCart.filter(p=>p.id!==cardInfo.id);
+    this.cartService.allCartProduct=this.cartService.allCartProduct.filter(p=>p.id!==cardInfo.id);
+    
+   
+    console.log('total price inside remove function',this.totalPrice)
+
+  }  
+
+ 
+onChange(products:productsDetails, newValue: any) {
+  products.total = newValue;
+
+  
+  console.log('this.cartService.newOption',this.cartService.newOption)
+  this.cartService.newOption=products.total;
+  this.totalPrice-=products.totalPrice;
+  this.cartService.totalPrice-=products.totalPrice;
+
+products.totalPrice=products.total*products.price;
+
+this.totalPrice+=products.totalPrice;
+this.cartService.totalPrice+=products.totalPrice;
+this.cartService.newOption=Number(newValue)
+}
+checkoutSuccess(firstName: string): void{
+  this.productService.clearCart();
+  this.route.navigateByUrl(`success/${firstName}/${this.totalPrice}`);
+}
 
 }
+

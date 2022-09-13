@@ -1,7 +1,7 @@
 <form #form="ngForm"  (ngSubmit)="onSubmit()" style="margin-bottom: 13px;">
     <h1> Checkout </h1>
     <label>Full Name: </label>
-    <br>
+    <br> 
     <input type='text' name='firstName' required minlength="8" placeholder="Enter First Name" [(ngModel)]="firstName">
     <br>
     <label>Address: </label>
@@ -10,6 +10,6 @@
     <br>
     <label>Credit Card Number: </label><br />
     <input type='text' name='creditCard' required  minlength="16" maxlength="16" placeholder="(16-digit number)" [(ngModel)]="creditCard">
-    <br> 
+    <br>  
     <input [disabled]="form.invalid" type='submit' value="Submit" class="btn btn-primary" />
   </form>  

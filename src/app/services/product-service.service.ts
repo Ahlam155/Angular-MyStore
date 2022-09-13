@@ -1,27 +1,30 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CartProductDetails, productsDetails } from '../models/product-details';
+import {  productsDetails } from '../models/product-details';
+import { BehaviorSubject } from 'rxjs';
 
-@Injectable({
+@Injectable({ 
   providedIn: 'root'
 })
 export class ProductServiceService {
   myStorage = window.localStorage;
 
+  private totalValue = new BehaviorSubject(0);
+  currentValue = this.totalValue.asObservable(); 
+
   constructor(private http:HttpClient) { }
+
+  changeValue(totalPrice: number) {
+    this.totalValue.next(totalPrice)
+  }
+
   getProductsInfo():Observable<productsDetails[]>{
     return this.http.get<productsDetails[]>('../assets/data.json')
 
   } 
 
-  addToCart(product: CartProductDetails[]): void{
-    this.myStorage.setItem('cart', JSON.stringify(product));
-  }
-  getCartProduct(): CartProductDetails[] | []{
-    const getProduct = this.myStorage.getItem('cart')
-    return getProduct? JSON.parse(getProduct): [];
-  }
+
   clearCart(): void{
     this.myStorage.clear();
   }

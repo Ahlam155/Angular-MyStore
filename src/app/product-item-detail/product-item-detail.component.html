@@ -1,15 +1,15 @@
 <div class="product-container" *ngFor="let myProduct of product">
     <div class="container">
-<div class="product-index" *ngIf="myProduct.id==id">
+<div class="product-index" *ngIf="myProduct.id==idValue">
     
 <img src="{{myProduct.url}}">
 <div class="details">
 <p><b>{{myProduct.name}}</b></p>
 <p>${{myProduct.price}}</p>
-<p>{{text[id-1]}}!</p> 
- 
-<form (ngSubmit)="onSubmit(myProduct, $event)" > 
-    <select name="quantity" >
+<p>{{text[idValue-1]}}!</p> 
+
+<form #form="ngForm" (ngSubmit)="onSubmit(myProduct, $event)" > 
+    <select  required name="quantity" [ngModel]="myProduct.option" (ngModelChange)="onChange(myProduct,$event)" >
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
@@ -18,7 +18,7 @@
         
     </select>
     <br>
-    <input type="submit" value="Add to Cart" style="margin-bottom: 10px;" class="product-detail btn btn-primary">
+    <input [disabled]="form.invalid" type="submit" value="Add to Cart" style="margin-bottom: 10px;" class="product-detail btn btn-primary">
 </form>
 <a routerLink="/">←Return to product list</a>
 </div></div>
