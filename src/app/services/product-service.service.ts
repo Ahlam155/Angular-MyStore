@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {  productsDetails } from '../models/product-details';
+import { productsDetails } from '../models/product-details';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({ 
@@ -20,10 +20,8 @@ export class ProductServiceService {
   }
 
   getProductsInfo():Observable<productsDetails[]>{
-    return this.http.get<productsDetails[]>('../assets/data.json')
-
+    return this.http.get<productsDetails[]>('https://ahlam155.github.io/Angular-MyStore/assets/data.json');
   } 
-
 
   clearCart(): void{
     this.myStorage.clear();
